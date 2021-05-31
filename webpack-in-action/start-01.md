@@ -1,0 +1,5 @@
+# Webpack
+
+## defer和async的区别
+浏览器在解析HTML代码时，遇到script标签，如果此script标签没有使用async和defer修饰，那么浏览器就会取解析并执行script中的代码，阻塞HTML的解析，造成界面长时间空白。如果script标签使用了async修饰，那么就会并行下载解析javascript，如果JavaScript解析完毕后，HTML还未解析完，那么async修饰的script中的JavaScript代码会阻塞HTML的解析，转而执行JavaScript。而defer修饰的script则不同，它也会在HTML解析的同时并行下载解析script中的代码，但是script中的JavaScript解析完毕后，如果HTML还未解析完毕，它是不会阻塞HTML的继续解析的，而是等待HTML解析完毕后转而执行script中的JavaScript代码。
+

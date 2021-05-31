@@ -1,0 +1,9 @@
+:root {
+    --security: #9df29d;
+    --danger: #f79494;
+    --normal: #a5cee1;
+}
+
+.color {
+    color: var(--security);
+}
