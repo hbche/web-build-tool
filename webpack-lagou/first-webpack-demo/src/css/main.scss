@@ -1,0 +1,14 @@
+$bg-color: #dbf;
+
+body {
+  background-color: $bg-color;
+}
+
+.code {
+  width: 30px;
+  height: 30px;
+  line-height: .8em;
+  // 存在浏览器兼容性问题
+  user-select: none;
+  -webkit-user-drag: none;
+}
