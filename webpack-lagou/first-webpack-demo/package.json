@@ -10,14 +10,23 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.14.7",
     "autoprefixer": "^10.2.6",
+    "babel-loader": "^8.2.2",
+    "core-js": "^3.12.1",
     "css-loader": "^5.2.6",
     "css-minimizer-webpack-plugin": "^3.0.2",
+    "eslint": "^7.29.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-webpack-plugin": "^2.5.4",
+    "html-webpack-plugin": "^5.3.2",
     "less": "^4.1.1",
     "less-loader": "^10.0.0",
     "mini-css-extract-plugin": "^1.6.1",
     "node-sass": "^6.0.1",
-    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "postcss-loader": "^6.1.0",
     "sass-loader": "^12.1.0",
     "style-loader": "^3.0.0",
@@ -36,5 +45,9 @@
     "rules": {
       "number-leading-zero": "never"
     }
-  }
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base"
+  },
+  "dependencies": {}
 }

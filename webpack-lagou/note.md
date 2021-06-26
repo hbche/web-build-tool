@@ -1,5 +1,8 @@
+# Webpack5学习指南
 
-Webpack的功能
+## Webpack介绍
+
+### Webpack的功能
 - 将多个文件合并(打包)，减少HTTP请求次数，从而提高效率
 - 对代码进行编译，确保浏览器兼容性
 - 对代码进行压缩，减小文件体积，提高加载速度
@@ -15,7 +18,7 @@ Webpack的发展历史
 - 2018.2，Webpack4
 - 2020.10，Webpack5（Node.js10.13+）
 
-## 核心概念
+### 核心概念
 - 入口（Entry）
 - 出口（Output）
 - 加载器（Loader）
@@ -68,7 +71,7 @@ Webpack的发展历史
 
 ### 依赖图
 
-## Webpack最佳实践
+### Webpack最佳实践
 
 - 初始化项目
   - mkdir my-project && cd my-project && npm init -y
@@ -85,7 +88,7 @@ Webpack的发展历史
   - npm install webpack -D  # webpack5
   - npm install webpack@4 -D    # webpack4
 
-## Webpack配置文件
+### Webpack配置文件
 - 配置文件是用来简化命令行选项
   - 配置前：webpack ./src/index.js --output-path=./dist --mode=development
   - 配置后：webpack
@@ -254,3 +257,101 @@ npm install less less-loader -D
    - new OptimizeCssAssetsPlugin()
 
 使用CssMinimizerWebpackPlugin插件
+
+### 打包HTML
+1. html-webpack-plugin插件
+   - 生成HTML文件(用于服务器访问)，并在HTML中加载所有的打包资源
+   - 指定HTML模板、设置HTML变量、压缩HTML
+2. 安装
+   - npm install html-webpack-plugin -D
+3. 配置
+   - https://www.npmjs.com/package/html-webpack-plugin
+4. HtmlWebpackPlugin插件默认使用的是[EJS模板引擎](https://ejs.bootcss.com/)
+
+5. 使用HtmlWebpackPlugin插件的option.minify配置对HTML进行压缩打包，如果webpack的mode配置为"production"，html-webpack-plugin插件的minify配置项默认打开
+``` js
+new HtmlWebpackPlugin({
+    filename: 'about.html',
+    template: 'src/index.html',
+    // 页面标题
+    title: 'About Webpack',
+    h1: 'About Webpack',
+    // 对"about.html"文件进行压缩打包
+    minify: {
+      collapseWhitespace: true,
+      keepClosingSlash: true,
+      removeComments: true,
+      removeRedundantAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      useShortDoctype: true
+    }
+})
+```
+
+### 打包JS
+
+#### 常规配置
+
+- 目的
+  - 将ES6+转换为ES5，从而保证JS在低版本浏览器中的兼容性
+- 安装
+  - npm install babel-loader @babel/core @babel/preset-env -D
+- 配置
+  - https://www.npmjs.com/package/babel-loader
+``` js
+module: {
+  rules: [
+    {
+      test: /\.m?js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            ['@babel/preset-env', { targets: "defaults" }]
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+- @babel/preset：ES转换规则集，包括babel-preset-es2015、babel-preset-es2016、babel-preset-es2017、babel-preset-es2018等等
+- @babel/preset-env: 包含所有ES的最新转换规则（只能转义基础语法，不能转换Promise这一类高级特性）
+- @babel/polyfill (转义所有ES新语法)
+  - npm i @babel/polyfill -D
+  - import '@babel/polyfill';(入口文件中引入)
+  - 转义后的文件暴增，例如bundle.js转义前大小为 `4.91KiB`,经过@babel/polyfill转义后，大小变为 `451KiB`，引入没有使用的新语法转义，该转义对当前项目可能是垃圾代码
+- core-js: 按需转义JS新语法，解决@babel/polyfill的暴力转义的问题
+  - 安装：npm install core-js -D
+  - 配置
+    - 按需加载useBuiltIns: 'usage'
+    - 指定版本corejs: 3
+  - 使用core-js按需编译，出包大小减小至 `113KiB`
+
+> `@babel/preset-env` 只能对简单的ES6+语法进行转换，例如箭头函数转function函数，但是对于Promise这一类高级特性，babel无法完成转换，需要借助 `babel/polyfill`(转义所有的ES新语法)
+
+> 注意：一定要在babel-loader的loader的option中使用exclude将node_modules(此时不能使用exclude: 'node_modules'，应该使用exclude: /node_modules/)下的三方包中js排除在core-js编译的目标之外，否则会报错。
+
+
+#### 校验JS代码格式
+1. 安装
+   - npm install eslint eslint-config-airbnb-base eslint-webpack-plugin eslint-plugin-import -D
+   - eslint(校验JS代码格式的工具): 发现和解决JS代码的问题
+     - https://eslint.org/
+   - eslint-config-airbnb-base(最流行的JS代码格式规范)
+     - https://www.npmjs.com/package/eslint-config-airbnb-base
+     - https://github.com/airbnb/javascript
+   - eslint-webpack-plugin
+     - https://www.npmjs.com/eslint-webpack-plugin
+   - eslint-plugin-import
+     - 入股eslint的配置项写在了package.json文件中，那么就需要借助eslint-plugin-import插件从package.json文件中读取`eslintConfig`配置项
+<!-- 2. 初始化生成.eslintrc文件 -->
+2. 配置
+   - eslint-webpack-plugin
+     - const ESLintWebpackPlugin = require('eslint-webpack-plugin');
+     - plugins: [new ESLintWebpackPlugin(options)],
+   - eslintConfig(package.json)
+     - "eslintConfig": { "extends": "airbnb-base" }
